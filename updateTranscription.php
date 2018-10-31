@@ -1,5 +1,4 @@
 <?php
-	include 'Token.php';
 	$params = parse_ini_file("../config.ini");
 	$conn = mysqli_connect($params['hostname'],$params['username'],$params['password'],$params['db_name']);
 

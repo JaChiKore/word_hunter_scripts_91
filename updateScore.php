@@ -29,7 +29,6 @@
 				$id_user = $result->id_user;
 
 				if (!$result) {
-					$send_data->token = -1;
 					$send_data->res = "false";
 					$json = json_encode($send_data);
 					print($json);
@@ -64,15 +63,11 @@
 					}
 					$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score2', level = '$level2' WHERE id_task = '2' AND id_user = '$id_user';");
 
-					$token = getNewToken($token);
-					mysqli_query($conn, "UPDATE user SET token = '$token' WHERE username = '$username';");
-					$send_data->token = $token;
 					$send_data->res = "true";
 					$json = json_encode($send_data);
 					print($json);
 				}
 			} else {
-				$send_data->token = -1;
 				$send_data->res = "false";
 				$json = json_encode($send_data);
 				print($json);
