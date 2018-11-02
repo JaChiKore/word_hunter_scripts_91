@@ -8,12 +8,20 @@
 	}
 
 	$username = $_POST['username'];
-	$password = $_POST['password'];
 	$score1 = $_POST['match_game'];
 	$score2 = $_POST['difference_game'];
 	$level1 = $_POST['match_level'];
 	$level2 = $_POST['difference_level'];
 	$token = $_POST['token'];
+
+	$send_data->debug = "";
+
+	$send_data->debug .= $username."<br>\n";
+	$send_data->debug .= $score1."<br>\n";
+	$send_data->debug .= $score2."<br>\n";
+	$send_data->debug .= $level1."<br>\n";
+	$send_data->debug .= $level2."<br>\n";
+	$send_data->debug .= $token."<br>\n";
 	
 	if (strlen($token) == 45) {
 		$res = mysqli_query($conn, "SELECT token FROM user WHERE username = '$username';");
@@ -21,62 +29,50 @@
 		$db_token = $res->token;
 		
 		if ($db_token == $token) {
-			$result = mysqli_query($conn, "SELECT password FROM user WHERE username = '$username';");
+			$result = mysqli_query($conn, "SELECT id_user FROM user WHERE username = '$username';");
 			$result = mysqli_fetch_object($result);
-			if (sha1($password) == $result->password) {
-				$result = mysqli_query($conn, "SELECT id_user FROM user WHERE username = '$username';");
-				$result = mysqli_fetch_object($result);
-				$id_user = $result->id_user;
+			$id_user = $result->id_user;
 
-				if (!$result) {
-					$send_data->res = "false";
-					$json = json_encode($send_data);
-					print($json);
-				} else {
-					$result = mysqli_query($conn, "SELECT max_score,level FROM user_task WHERE id_task = '1' AND id_user = '$username';");
-					$result = mysqli_fetch_object($result);
-					if (($score1 > ($result->max_score + 20)) || ($score1 < $result->max_score)) {
-						$score1 = $result->max_score;
-						echo nl2br("…………………./´¯/) \n");
-						echo nl2br("………………..,/¯../ \n");
-						echo nl2br("………………./…./ \n");
-					}
-					if (($level1 > ($result->level + 2)) || ($score1 < $result->level - 2) || ($score1 < 1)) {
-						$level1 = $result->level;
-						echo nl2br("…………./´¯/’…’/´¯¯`·¸ \n");
-						echo nl2br("………./’/…/…./……./¨¯\ \n");
-					}
-					$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score1', level = '$level1' WHERE id_task = '1' AND id_user = '$id_user';");
-
-					$result = mysqli_query($conn, "SELECT max_score,level FROM user_task WHERE id_task = '2' AND id_user = '$username';");
-					$result = mysqli_fetch_object($result);
-					if (($score2 > ($result->max_score + 20)) || ($score2 < $result->max_score)) {
-						$score2 = $result->max_score;
-						echo nl2br("……..(‘(…´…´…. ¯~/’…’) \n");
-						echo nl2br("………\……………..’…../ \n");
-						echo nl2br("……….”…\………. _.·´ \n");
-					}
-					if (($level2 > ($result->level + 2)) || ($score2 < $result->level - 2) || ($score2 < 1)) {
-						$level2 = $result->level;
-						echo nl2br("…………\…………..( \n");
-						echo nl2br("…………..\………….\ \n");
-					}
-					$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score2', level = '$level2' WHERE id_task = '2' AND id_user = '$id_user';");
-
-					$send_data->res = "true";
-					$json = json_encode($send_data);
-					print($json);
-				}
-			} else {
+			if (!$result) {
 				$send_data->res = "false";
+				$json = json_encode($send_data);
+				print($json);
+			} else {
+				$result = mysqli_query($conn, "SELECT max_score,level FROM user_task WHERE id_task = '1' AND id_user = '$username';");
+				$result = mysqli_fetch_object($result);
+				if (($score1 > ($result->max_score + 20)) or ($score1 < $result->max_score)) {
+					$score1 = $result->max_score;
+					$send_data->debug .= "Check score1: ".$score1." ".$result->max_score."<br>\n";
+				}
+				if (($level1 > ($result->level + 2)) or ($level1 < ($result->level - 2)) || ($level1 < 1)) {
+					$level1 = $result->level;
+					$send_data->debug .= "Check level1: ".$level1." ".$result->level."<br>\n";
+				}
+				$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score1', level = '$level1' WHERE id_task = '1' AND id_user = '$id_user';");
+
+				$result = mysqli_query($conn, "SELECT max_score,level FROM user_task WHERE id_task = '2' AND id_user = '$username';");
+				$result = mysqli_fetch_object($result);
+				if (($score2 > ($result->max_score + 20)) or ($score2 < $result->max_score)) {
+					$score2 = $result->max_score;
+					$send_data->debug .= "Check score2: ".$score2." ".$result->max_score."<br>\n";
+				}
+				if (($level2 > ($result->level + 2)) or ($level2 < ($result->level - 2)) || ($level2 < 1)) {
+					$level2 = $result->level;
+					$send_data->debug .= "Check level2: ".$level2." ".$result->level."<br>\n";
+				}
+				$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score2', level = '$level2' WHERE id_task = '2' AND id_user = '$id_user';");
+
+				$send_data->res = "true";
 				$json = json_encode($send_data);
 				print($json);
 			}
 		} else {
-			print("404 Not Found");
+			$json = json_encode($send_data);
+			print($json);
 		}
 	} else {
-		print("404 Not Found");
+		$json = json_encode($send_data);
+		print($json);
 	}
 	mysqli_close();
 
