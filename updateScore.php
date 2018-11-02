@@ -14,14 +14,7 @@
 	$level2 = $_POST['difference_level'];
 	$token = $_POST['token'];
 
-	$send_data->debug = "";
-
-	$send_data->debug .= $username."<br>\n";
-	$send_data->debug .= $score1."<br>\n";
-	$send_data->debug .= $score2."<br>\n";
-	$send_data->debug .= $level1."<br>\n";
-	$send_data->debug .= $level2."<br>\n";
-	$send_data->debug .= $token."<br>\n";
+	$send_data->debug = "debug info<br>\n";
 	
 	if (strlen($token) == 45) {
 		$res = mysqli_query($conn, "SELECT token FROM user WHERE username = '$username';");
@@ -42,11 +35,9 @@
 				$result = mysqli_fetch_object($result);
 				if (($score1 > ($result->max_score + 20)) or ($score1 < $result->max_score)) {
 					$score1 = $result->max_score;
-					$send_data->debug .= "Check score1: ".$score1." ".$result->max_score."<br>\n";
 				}
 				if (($level1 > ($result->level + 2)) or ($level1 < ($result->level - 2)) || ($level1 < 1)) {
 					$level1 = $result->level;
-					$send_data->debug .= "Check level1: ".$level1." ".$result->level."<br>\n";
 				}
 				$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score1', level = '$level1' WHERE id_task = '1' AND id_user = '$id_user';");
 
@@ -54,11 +45,9 @@
 				$result = mysqli_fetch_object($result);
 				if (($score2 > ($result->max_score + 20)) or ($score2 < $result->max_score)) {
 					$score2 = $result->max_score;
-					$send_data->debug .= "Check score2: ".$score2." ".$result->max_score."<br>\n";
 				}
 				if (($level2 > ($result->level + 2)) or ($level2 < ($result->level - 2)) || ($level2 < 1)) {
 					$level2 = $result->level;
-					$send_data->debug .= "Check level2: ".$level2." ".$result->level."<br>\n";
 				}
 				$result = mysqli_query($conn, "UPDATE user_task SET max_score = '$score2', level = '$level2' WHERE id_task = '2' AND id_user = '$id_user';");
 

@@ -8,8 +8,9 @@
 	}
 
 	$username = $_POST['username'];
-	$password = $_POST['password'];
 	$token = $_POST['token'];
+
+	$send_data->debug = "debug info<br>\n";
 	
 	if (strlen($token) == 45) {
 		$res = mysqli_query($conn, "SELECT token FROM user WHERE username = '$username';");
@@ -17,26 +18,23 @@
 		$db_token = $res->token;
 		
 		if ($db_token == $token) {
-			$result = mysqli_query($conn, "SELECT password FROM user WHERE username = '$username';");
-			$result = mysqli_fetch_object($result);
-			if (sha1($password) == $result->password) {
-				$token = generateToken();
-				mysqli_query($conn, "UPDATE user SET token = '$token' WHERE username = '$username';");
-				$send_data->token = $token;
-				$send_data->res = "true";
-				$json = json_encode($send_data);
-				print($json);
-			} else {
-				$send_data->token = $token;
-				$send_data->res = "false";
-				$json = json_encode($send_data);
-				print($json);
-			}
+			$token = generateToken();
+			mysqli_query($conn, "UPDATE user SET token = '$token' WHERE username = '$username';");
+			$send_data->token = $token;
+			$send_data->res = "true";
+			$json = json_encode($send_data);
+			print($json);
 		} else {
-			print("404 Not Found");
+			$send_data->debug = "404 Not Found<br>\n";
+			$send_data->res = "false";
+			$json = json_encode($send_data);
+			print($json);
 		}
 	} else {
-		print("404 Not Found");
+		$send_data->debug = "404 Not Found<br>\n";
+		$send_data->res = "false";
+		$json = json_encode($send_data);
+		print($json);
 	}
 	mysqli_close();
 

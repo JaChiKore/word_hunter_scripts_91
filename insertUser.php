@@ -11,6 +11,8 @@
 	$password = $_POST['password'];
 	$token = $_POST['token'];
 	
+	$send_data->debug = "debug info<br>\n";
+	
 	if (strlen($token) == 45) {
 		$result = mysqli_query($conn, "SELECT id_user FROM user WHERE username = '$username';");
 		
@@ -40,7 +42,10 @@
 			print($json);
 		}
 	} else {
-		print("404 Not Found");
+		$send_data->debug = "404 Not Found<br>\n";
+		$send_data->res = "false";
+		$json = json_encode($send_data);
+		print($json);
 	}
 
 	mysqli_close();
