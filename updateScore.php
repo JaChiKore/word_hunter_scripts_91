@@ -56,10 +56,12 @@
 				print($json);
 			}
 		} else {
+			$send_data->debug .= "404 Not Found<br>\n";
 			$json = json_encode($send_data);
 			print($json);
 		}
 	} else {
+		$send_data->debug .= "404 Not Found<br>\n";
 		$json = json_encode($send_data);
 		print($json);
 	}
