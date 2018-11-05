@@ -22,7 +22,7 @@
 
 	if ($count == 0) {
 		$password = sha1($password);
-		$token = getNewToken($token);
+		$token = generateToken($token);
 		mysqli_query($conn, "INSERT INTO user(username, password, token) VALUES ('$username', '$password','$token')");
 		$result = mysqli_query($conn, "SELECT MAX(id_user) AS id_user FROM user WHERE username = '$username';");
 		$row = mysqli_fetch_object($result);
